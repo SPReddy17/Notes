@@ -11,6 +11,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+// notes model
 @Entity(tableName = "notes")
 public class Note  implements Parcelable {
     @PrimaryKey(autoGenerate = true)
