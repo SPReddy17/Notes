@@ -16,6 +16,7 @@ import retrofit2.Response;
 
 import static com.android.notes.repository.NoteRepository.INSERT_FAILURE;
 import static com.android.notes.repository.NoteRepository.INSERT_SUCCESS;
+import static com.android.notes.repository.NoteRepository.NOTE_TITLE_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -96,7 +97,7 @@ public class NoteRepositoryTest {
 
     @Test
     void insertNote_nullTitle_throwException() throws Exception {
-        assertThrows(Exception.class, new Executable() {
+       Exception exception =  assertThrows(Exception.class, new Executable() {
             @Override
             public void execute() throws Throwable {
                 final Note  note = new Note(TestUtil.TEST_NOTE_1);
@@ -104,6 +105,7 @@ public class NoteRepositoryTest {
                 noteRepository.insertNote(note);
             }
         });
+       assertEquals(NOTE_TITLE_NULL,exception.getMessage());
     }
 }
 
