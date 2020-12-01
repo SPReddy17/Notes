@@ -27,12 +27,50 @@ public class NoteRepositoryTest {
 
    }
 
+   /*
+   * insert note
+   * verify the correct method is called
+   * confirm the observer is triggered
+   * confirm new rows are inserted
+   * */
+
     @Test
-    void dummTest() throws Exception {
+    void insertNote_returnRow() throws Exception {
 
-        assertNotNull(noteDao);
-        assertNotNull(noteRepository);
+        //Arrange
 
+        //Act
+
+        //Assert
+    }
+
+    /*insert note
+   * Failure(return -1)
+   * */
+
+    @Test
+    void insertNote_returnFailure() throws Exception {
+
+        //Arrange
+
+        //Act
+
+        //Assert
+    }
+    /*
+   * insert note
+   * null title
+   * confirm the exception
+   * */
+
+    @Test
+    void insertNote_nullTitle_throwException() throws Exception {
+
+        //Arrange
+
+        //Act
+
+        //Assert
     }
 }
 
