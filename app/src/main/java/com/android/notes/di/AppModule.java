@@ -2,11 +2,14 @@ package com.android.notes.di;
 
 import android.app.Application;
 
+import androidx.room.PrimaryKey;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.android.notes.models.Note;
 import com.android.notes.persistence.NoteDao;
 import com.android.notes.persistence.NoteDatabase;
+import com.android.notes.repository.NoteRepository;
 
 import javax.inject.Singleton;
 
@@ -33,5 +36,11 @@ public class AppModule {
     @Provides
     static NoteDao provideNoteDao(NoteDatabase noteDatabase){
         return noteDatabase.getNoteDao();
+    }
+
+    @Singleton
+    @Provides
+    static NoteRepository provideNoteRepository(NoteDao noteDao){
+        return new NoteRepository(noteDao);
     }
 }
