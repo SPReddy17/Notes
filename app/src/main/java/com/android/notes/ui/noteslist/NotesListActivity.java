@@ -1,10 +1,11 @@
-package com.android.notes;
+package com.android.notes.ui.noteslist;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.notes.R;
 import com.android.notes.repository.NoteRepository;
 
 import javax.inject.Inject;
