@@ -10,7 +10,11 @@ import com.android.notes.repository.NoteRepository;
 import com.android.notes.ui.Resource;
 import com.android.notes.util.DateUtil;
 
+import org.reactivestreams.Subscription;
+
 import javax.inject.Inject;
+
+import io.reactivex.functions.Consumer;
 
 import static com.android.notes.repository.NoteRepository.NOTE_TITLE_NULL;
 
@@ -18,6 +22,7 @@ public class NoteViewModel extends ViewModel {
 
     private static final String TAG = "NoteViewModel";
 
+    public static final String NO_CONTENT_ERROR = "Can't save note with no content";
     public enum ViewState{VIEW,EDIT}
 
     //inject
@@ -27,6 +32,8 @@ public class NoteViewModel extends ViewModel {
     private MutableLiveData<Note> note = new MutableLiveData<>();
     private MutableLiveData<ViewState> viewState = new MutableLiveData<>();
     private boolean isNewNote;
+    private Subscription updateSubscription, insertSubscription;
+
 
     @Inject
     public NoteViewModel(NoteRepository noteRepository) {
@@ -36,6 +43,23 @@ public class NoteViewModel extends ViewModel {
     public LiveData<Resource<Integer>> insertNote () throws Exception{
         return LiveDataReactiveStreams.fromPublisher(
                 noteRepository.insertNote(note.getValue())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                        insertSubscription = subscription;
+                    }
+                })
+        );
+    }
+    public  LiveData<Resource<Integer>> updateNote() throws  Exception{
+        return LiveDataReactiveStreams.fromPublisher(
+                noteRepository.updateNote(note.getValue())
+                .doOnSubscribe(new Consumer<Subscription>() {
+                    @Override
+                    public void accept(Subscription subscription) throws Exception {
+                        updateSubscription = subscription;
+                    }
+                })
         );
     }
     public LiveData<Note> observeNote(){
@@ -50,10 +74,39 @@ public class NoteViewModel extends ViewModel {
     public void setIsNewNote(boolean isNewNote){
         this.isNewNote = isNewNote;
     }
-    public LiveData<Resource<Integer>> saveNote(){
+    public LiveData<Resource<Integer>> saveNote() throws Exception{
+
+        if(!shouldAllowSave()){
+            throw new Exception(NO_CONTENT_ERROR);
+        }
+        cancelPendingTransactions();
+
         return null;
     }
 
+    private void cancelPendingTransactions(){
+        if (insertSubscription != null) {
+             cancelInsertTransaction();
+        }
+        if (updateSubscription != null) {
+            cancelUpdateTransaction();
+        }
+    }
+    private void cancelUpdateTransaction(){
+        updateSubscription.cancel();
+        updateSubscription = null;
+
+    }
+    private void cancelInsertTransaction(){
+        insertSubscription.cancel();
+        insertSubscription = null;
+
+    }
+
+    private boolean shouldAllowSave(){
+        return removeWhiteSpace(note.getValue().getContent()).length() > 0;
+
+    }
     public void updateNote(String title, String content) throws Exception{
         if(title == null || title.equals("")){
             throw new NullPointerException("Title can't be null");
