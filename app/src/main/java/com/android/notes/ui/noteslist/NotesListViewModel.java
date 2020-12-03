@@ -26,7 +26,7 @@ public class NotesListViewModel extends ViewModel {
         this.noteRepository = noteRepository;
     }
 
-    public LiveData<Resource<Integer>>  deleteNotes (final Note note) throws Exception{
+    public LiveData<Resource<Integer>>  deleteNote (final Note note) throws Exception{
         return noteRepository.deleteNote(note);
     }
     public LiveData<List<Note>> observeNotes(){
